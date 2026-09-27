@@ -45,4 +45,16 @@ Aparecerá um menu interativo:
 - **Opção 2:** Para rodar o servidor local (Front-end + Back-end juntos).
 - **Opção 3:** Para commitar e subir suas alterações pro GitHub automaticamente.
 
+## 5. CI/CD: Automação de Migrations (Importante)
+Nosso projeto possui **Integração Contínua (CI)** via GitHub Actions.
+Sempre que você usar a opção 3 do `ngb.sh` para dar um Push no código e houver uma mudança no arquivo `schema.prisma`, o robô do GitHub vai rodar o comando `npx prisma migrate deploy` sozinho para atualizar as tabelas de todo mundo.
+
+Para que isso funcione, foi configurada uma **Secret** no GitHub chamada `DATABASE_URL` contendo a string de acesso ao Supabase. Você não precisa se preocupar em rodar migrations localmente para o ambiente de Produção, o GitHub faz por você!
+
+## 6. Acesso Super Admin (Testes)
+Quando for testar o front-end, o sistema está bloqueado na tela de login por padrão.
+Para entrar e acessar os Dashboards, utilize as seguintes credenciais Hardcoded:
+- **E-mail:** `romulogomescavalcante7@gmail.com`
+- **Senha:** `23782613`
+
 **E é isso!** Boa codificação.
