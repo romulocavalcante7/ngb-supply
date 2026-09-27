@@ -9,6 +9,8 @@ export class RiskSubscriber implements Subscriber {
   constructor() {
     broker.subscribe(Topics.TEMPERATURE, this);
     broker.subscribe(Topics.DOOR, this);
+    broker.subscribe(Topics.SPEED, this);
+    broker.subscribe(Topics.BATTERY, this);
     broker.subscribe(Topics.ALERT, this);
   }
 
@@ -17,6 +19,10 @@ export class RiskSubscriber implements Subscriber {
       this.handleTemperature(message);
     } else if (topic === Topics.DOOR) {
       this.handleDoor(message);
+    } else if (topic === Topics.SPEED) {
+      this.handleSpeed(message);
+    } else if (topic === Topics.BATTERY) {
+      this.handleBattery(message);
     } else if (topic === Topics.ALERT) {
       this.handleAlert(message);
     }
@@ -43,14 +49,14 @@ export class RiskSubscriber implements Subscriber {
       broker.publish(Topics.ALERT, {
         cargaId,
         tipo: 'TEMPERATURA_ALTA',
-        severidade: 'ALTA',
+        severidade: 'HIGH',
         mensagem: 'Temperatura acima do limite permitido (> 10°C)'
       });
     } else if (temperatura > 8) {
       broker.publish(Topics.ALERT, {
         cargaId,
         tipo: 'TEMPERATURA_ATENCAO',
-        severidade: 'MEDIA',
+        severidade: 'MEDIUM',
         mensagem: 'Temperatura em nível de atenção (8°C - 10°C)'
       });
     }
@@ -62,8 +68,32 @@ export class RiskSubscriber implements Subscriber {
       broker.publish(Topics.ALERT, {
         cargaId,
         tipo: 'PORTA_ABERTA',
-        severidade: 'MEDIA',
+        severidade: 'MEDIUM',
         mensagem: 'A porta da carga foi aberta durante o trajeto'
+      });
+    }
+  }
+
+  private handleSpeed(message: EventPayload) {
+    const { loadId, speed } = message;
+    if (speed > 100) {
+      broker.publish(Topics.ALERT, {
+        cargaId: loadId || message.cargaId,
+        tipo: 'VELOCIDADE_ALTA',
+        severidade: 'HIGH',
+        mensagem: `Velocidade acima do limite (100km/h): ${speed}km/h`
+      });
+    }
+  }
+
+  private handleBattery(message: EventPayload) {
+    const { loadId, level } = message;
+    if (level < 20) {
+      broker.publish(Topics.ALERT, {
+        cargaId: loadId || message.cargaId,
+        tipo: 'BATERIA_BAIXA',
+        severidade: 'HIGH',
+        mensagem: `Nível de bateria crítico: ${level}%`
       });
     }
   }

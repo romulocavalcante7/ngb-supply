@@ -1,11 +1,17 @@
 import { NavLink } from 'react-router-dom';
-import { LayoutDashboard, Truck, Activity, ShieldAlert, Package } from 'lucide-react';
+import { LayoutDashboard, Truck, Activity, ShieldAlert, Package, Compass, Car, Users, Map, Settings2, BarChart2 } from 'lucide-react';
 
 export function Sidebar() {
   const menus = [
     { name: 'Dashboard', path: '/', icon: LayoutDashboard },
     { name: 'Gestão de Cargas', path: '/loads', icon: Truck },
+    { name: 'Viagens', path: '/trips', icon: Map },
+    { name: 'Veículos', path: '/vehicles', icon: Car },
+    { name: 'Motoristas', path: '/drivers', icon: Users },
+    { name: 'Mapa (Rastreamento)', path: '/tracking', icon: Compass },
+    { name: 'Telemetria', path: '/telemetry', icon: BarChart2 },
     { name: 'Monitor de Dados', path: '/events', icon: Activity },
+    { name: 'Regras de Risco', path: '/risk-rules', icon: Settings2 },
     { name: 'Alertas', path: '/alerts', icon: ShieldAlert },
   ];
 
@@ -42,6 +48,7 @@ export function Sidebar() {
           <div className="w-10 h-10 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center">
             <span className="text-sm font-bold text-slate-300">OP</span>
           </div>
+
           <div>
             <p className="text-sm font-medium text-slate-200">Operador</p>
             <p className="text-xs text-slate-500">Central de Risco</p>

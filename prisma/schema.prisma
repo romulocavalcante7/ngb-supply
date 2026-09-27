@@ -21,18 +21,55 @@ model User {
   createdAt DateTime @default(now())
 }
 
-model Vehicle {
+model Company {
   id        String   @id @default(uuid())
-  plate     String   @unique
-  model     String
-  driver    String
+  name      String
+  cnpj      String   @unique
+  createdAt DateTime @default(now())
+  customers Customer[]
+}
+
+model Customer {
+  id        String   @id @default(uuid())
+  name      String
+  companyId String
+  company   Company  @relation(fields: [companyId], references: [id])
   createdAt DateTime @default(now())
   loads     Load[]
 }
 
+model Driver {
+  id        String   @id @default(uuid())
+  name      String
+  cpf       String   @unique
+  cnh       String   @unique
+  category  String
+  phone     String?
+  status    String   @default("ACTIVE")
+  createdAt DateTime @default(now())
+  trips     Trip[]
+}
+
+model Vehicle {
+  id        String   @id @default(uuid())
+  plate     String   @unique
+  model     String
+  brand     String?
+  year      Int?
+  type      String?
+  capacity  Float?
+  status    String   @default("AVAILABLE")
+  createdAt DateTime @default(now())
+  loads     Load[]
+  trips     Trip[]
+}
+
 enum LoadStatus {
   PLANNED
+  PREPARING
+  LOADED
   IN_TRANSIT
+  AT_DESTINATION
   DELIVERED
   DELAYED
   CANCELLED
@@ -44,14 +81,63 @@ model Load {
   origin      String
   destination String
   status      LoadStatus @default(PLANNED)
+  type        String?
+  weight      Float?
+  volume      Float?
+  customerId  String?
+  customer    Customer? @relation(fields: [customerId], references: [id])
   vehicleId   String?
   vehicle     Vehicle?  @relation(fields: [vehicleId], references: [id])
+  tripId      String?
+  trip        Trip?     @relation(fields: [tripId], references: [id])
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
   sensorReadings SensorReading[]
   events         Event[]
   alerts         Alert[]
+  stages         SupplyChainStage[]
+}
+
+enum TripStatus {
+  PLANNED
+  STARTED
+  IN_PROGRESS
+  PAUSED
+  COMPLETED
+  CANCELLED
+}
+
+model Trip {
+  id          String   @id @default(uuid())
+  origin      String
+  destination String
+  status      TripStatus @default(PLANNED)
+  startDate   DateTime?
+  endDate     DateTime?
+  vehicleId   String
+  vehicle     Vehicle   @relation(fields: [vehicleId], references: [id])
+  driverId    String
+  driver      Driver    @relation(fields: [driverId], references: [id])
+  createdAt   DateTime @default(now())
+  loads       Load[]
+  routes      Route[]
+}
+
+model Route {
+  id          String   @id @default(uuid())
+  tripId      String
+  trip        Trip     @relation(fields: [tripId], references: [id])
+  name        String
+  checkpoints Checkpoint[]
+}
+
+model Checkpoint {
+  id        String   @id @default(uuid())
+  routeId   String
+  route     Route    @relation(fields: [routeId], references: [id])
+  location  String
+  reachedAt DateTime?
 }
 
 model SensorReading {
@@ -76,8 +162,9 @@ model Event {
 
 enum AlertSeverity {
   LOW
-  MEDIA
-  ALTA
+  MEDIUM
+  HIGH
+  CRITICAL
 }
 
 enum AlertStatus {
@@ -91,9 +178,28 @@ model Alert {
   loadId     String
   load       Load     @relation(fields: [loadId], references: [id])
   type       String
-  severity   AlertSeverity @default(MEDIA)
+  severity   AlertSeverity @default(MEDIUM)
   message    String
   status     AlertStatus   @default(OPEN)
   createdAt  DateTime @default(now())
   resolvedAt DateTime?
+}
+
+model AlertRule {
+  id          String   @id @default(uuid())
+  name        String
+  metric      String
+  operator    String
+  threshold   Float
+  severity    AlertSeverity
+  isActive    Boolean  @default(true)
+}
+
+model SupplyChainStage {
+  id        String   @id @default(uuid())
+  loadId    String
+  load      Load     @relation(fields: [loadId], references: [id])
+  name      String
+  status    String   @default("PENDING")
+  order     Int
 }
