@@ -1,0 +1,35 @@
+name: Prisma Database Migrations
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'prisma/schema.prisma'
+      - 'prisma/migrations/**'
+
+jobs:
+  migrate:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: 🛎️ Checkout do código
+        uses: actions/checkout@v3
+
+      - name: ⚙️ Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+
+      - name: 📦 Instalar dependências
+        run: npm ci || npm install
+
+      - name: 🚀 Aplicar Migrations no Banco de Dados
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: |
+          if [ -z "$DATABASE_URL" ]; then
+            echo "❌ Erro: Secret DATABASE_URL não encontrada no GitHub."
+            exit 1
+          fi
+          npx prisma migrate deploy
