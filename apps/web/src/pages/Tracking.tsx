@@ -20,11 +20,10 @@ export function Tracking() {
       // Cria o mapa centrado no Brasil
       leafletMap.current = window.L.map(mapRef.current).setView([-15.793889, -47.882778], 5);
       
-      // Adiciona a camada Dark (estilo CartoDB Dark Matter)
-      window.L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-        attribution: '&copy; OpenStreetMap contributors &copy; CARTO',
-        subdomains: 'abcd',
-        maxZoom: 20
+      // Adiciona a camada OpenStreetMap padrão (100% Gratuita e sem API Key)
+      window.L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors',
+        maxZoom: 19
       }).addTo(leafletMap.current);
 
       // Configura um ícone de caminhão customizado
@@ -122,6 +121,10 @@ export function Tracking() {
           <div ref={mapRef} className="w-full h-full bg-[#0a0f1c]"></div>
           
           <style>{`
+            /* Filtro CSS Mágico para transformar o mapa claro do OSM em Dark Mode Premium */
+            .leaflet-tile-pane {
+              filter: invert(100%) hue-rotate(180deg) brightness(95%) contrast(90%);
+            }
             /* Ajustes finos do CSS do Leaflet para ficar premium */
             .leaflet-container { background: #020617; font-family: inherit; }
             .leaflet-popup-content-wrapper { background: #0f172a; color: #f1f5f9; border: 1px solid #1e293b; border-radius: 12px; }
