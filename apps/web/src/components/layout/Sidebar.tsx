@@ -1,7 +1,10 @@
 import { NavLink } from 'react-router-dom';
-import { LayoutDashboard, Truck, Activity, ShieldAlert, Package, Compass, Car, Users, Map, Settings2, BarChart2 } from 'lucide-react';
+import { LayoutDashboard, Truck, Activity, ShieldAlert, Package, Compass, Car, Users, Map, Settings2, BarChart2, LogOut } from 'lucide-react';
+import { useAuthStore } from '../../stores/authStore';
 
 export function Sidebar() {
+  const { user, logout } = useAuthStore();
+  
   const menus = [
     { name: 'Dashboard', path: '/', icon: LayoutDashboard },
     { name: 'Gestão de Cargas', path: '/loads', icon: Truck },
@@ -45,14 +48,18 @@ export function Sidebar() {
 
       <div className="p-6 border-t border-[var(--color-card-border)]">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center">
+          <div className="w-10 h-10 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center shrink-0">
             <span className="text-sm font-bold text-slate-300">OP</span>
           </div>
 
-          <div>
-            <p className="text-sm font-medium text-slate-200">Operador</p>
-            <p className="text-xs text-slate-500">Central de Risco</p>
+          <div className="flex-1 overflow-hidden">
+            <p className="text-sm font-medium text-slate-200 truncate">{user?.name || 'Operador'}</p>
+            <p className="text-xs text-slate-500 truncate">{user?.email || 'Central de Risco'}</p>
           </div>
+          
+          <button onClick={logout} className="p-2 text-slate-400 hover:text-danger hover:bg-danger/10 rounded-lg transition-colors ml-auto" title="Sair">
+            <LogOut className="w-4 h-4" />
+          </button>
         </div>
       </div>
     </aside>

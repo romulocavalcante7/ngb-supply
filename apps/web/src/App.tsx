@@ -11,8 +11,16 @@ import { Drivers } from './pages/Drivers';
 import { Trips } from './pages/Trips';
 import { RiskRules } from './pages/RiskRules';
 import { Telemetry } from './pages/Telemetry';
+import { Login } from './pages/Login';
+import { useAuthStore } from './stores/authStore';
 
 export default function App() {
+  const { isAuthenticated } = useAuthStore();
+
+  if (!isAuthenticated) {
+    return <Login />;
+  }
+
   return (
     <BrowserRouter>
       <Routes>
