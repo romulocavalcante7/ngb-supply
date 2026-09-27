@@ -1,0 +1,99 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum Role {
+  ADMIN
+  OPERATOR
+  CUSTOMER
+}
+
+model User {
+  id        String   @id @default(uuid())
+  name      String
+  email     String   @unique
+  role      Role     @default(CUSTOMER)
+  createdAt DateTime @default(now())
+}
+
+model Vehicle {
+  id        String   @id @default(uuid())
+  plate     String   @unique
+  model     String
+  driver    String
+  createdAt DateTime @default(now())
+  loads     Load[]
+}
+
+enum LoadStatus {
+  PLANNED
+  IN_TRANSIT
+  DELIVERED
+  DELAYED
+  CANCELLED
+}
+
+model Load {
+  id          String   @id @default(uuid())
+  code        String   @unique
+  origin      String
+  destination String
+  status      LoadStatus @default(PLANNED)
+  vehicleId   String?
+  vehicle     Vehicle?  @relation(fields: [vehicleId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  sensorReadings SensorReading[]
+  events         Event[]
+  alerts         Alert[]
+}
+
+model SensorReading {
+  id        String   @id @default(uuid())
+  loadId    String
+  load      Load     @relation(fields: [loadId], references: [id])
+  type      String
+  value     Float?
+  unit      String?
+  createdAt DateTime @default(now())
+}
+
+model Event {
+  id        String   @id @default(uuid())
+  loadId    String
+  load      Load     @relation(fields: [loadId], references: [id])
+  topic     String
+  type      String
+  payload   Json
+  createdAt DateTime @default(now())
+}
+
+enum AlertSeverity {
+  LOW
+  MEDIA
+  ALTA
+}
+
+enum AlertStatus {
+  OPEN
+  ACKNOWLEDGED
+  RESOLVED
+}
+
+model Alert {
+  id         String   @id @default(uuid())
+  loadId     String
+  load       Load     @relation(fields: [loadId], references: [id])
+  type       String
+  severity   AlertSeverity @default(MEDIA)
+  message    String
+  status     AlertStatus   @default(OPEN)
+  createdAt  DateTime @default(now())
+  resolvedAt DateTime?
+}
