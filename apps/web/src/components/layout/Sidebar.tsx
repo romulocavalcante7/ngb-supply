@@ -4,8 +4,8 @@ import { LayoutDashboard, Truck, Activity, ShieldAlert, Package } from 'lucide-r
 export function Sidebar() {
   const menus = [
     { name: 'Dashboard', path: '/', icon: LayoutDashboard },
-    { name: 'Cargas', path: '/loads', icon: Truck },
-    { name: 'Pub/Sub Monitor', path: '/events', icon: Activity },
+    { name: 'Gestão de Cargas', path: '/loads', icon: Truck },
+    { name: 'Monitor de Dados', path: '/events', icon: Activity },
     { name: 'Alertas', path: '/alerts', icon: ShieldAlert },
   ];
 

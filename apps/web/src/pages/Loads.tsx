@@ -1,4 +1,8 @@
+import { useState } from 'react';
 import { Truck, Search, Filter } from 'lucide-react';
+import { Drawer } from '../components/ui/Drawer';
+import { Button } from '../components/ui/Button';
+import { useToastStore } from '../stores/toastStore';
 
 const mockLoads = [
   { id: 'CARGA-001', origin: 'Goiânia - GO', destination: 'Brasília - DF', status: 'IN_TRANSIT' },
@@ -7,6 +11,15 @@ const mockLoads = [
 ];
 
 export function Loads() {
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const addToast = useToastStore(state => state.addToast);
+
+  const handleCreateLoad = (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsDrawerOpen(false);
+    addToast('Nova carga registrada com sucesso e em roteirização.', 'success');
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
@@ -19,13 +32,13 @@ export function Loads() {
         </div>
         
         <div className="flex gap-2">
-          <button className="glass-panel px-4 py-2 text-sm flex items-center gap-2 hover:bg-slate-800 transition-colors">
-            <Filter className="w-4 h-4 text-slate-400" />
+          <Button variant="secondary">
+            <Filter className="w-4 h-4 mr-2" />
             Filtrar
-          </button>
-          <button className="bg-primary text-white px-4 py-2 rounded-xl text-sm font-medium hover:bg-primary/90 transition-colors shadow-lg shadow-primary/20">
+          </Button>
+          <Button onClick={() => setIsDrawerOpen(true)}>
             + Nova Carga
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -65,6 +78,34 @@ export function Loads() {
           </table>
         </div>
       </div>
+
+      <Drawer 
+        isOpen={isDrawerOpen} 
+        onClose={() => setIsDrawerOpen(false)} 
+        title="Registrar Nova Carga"
+      >
+        <form onSubmit={handleCreateLoad} className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-slate-300 mb-1">Origem</label>
+            <input required type="text" className="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2 text-slate-200 outline-none focus:border-primary transition-colors" placeholder="Ex: São Paulo - SP" />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-slate-300 mb-1">Destino</label>
+            <input required type="text" className="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2 text-slate-200 outline-none focus:border-primary transition-colors" placeholder="Ex: Rio de Janeiro - RJ" />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-slate-300 mb-1">Veículo / Placa</label>
+            <input required type="text" className="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2 text-slate-200 outline-none focus:border-primary transition-colors" placeholder="Ex: ABC-1234" />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-slate-300 mb-1">Temperatura Alvo (°C)</label>
+            <input type="number" defaultValue="8" className="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2 text-slate-200 outline-none focus:border-primary transition-colors" />
+          </div>
+          <div className="pt-6">
+            <Button type="submit" className="w-full">Confirmar Registro</Button>
+          </div>
+        </form>
+      </Drawer>
     </div>
   );
 }

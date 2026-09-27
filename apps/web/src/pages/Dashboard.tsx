@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { io } from 'socket.io-client';
 import { Thermometer, ShieldAlert, MapPin, Activity } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
+import { useToastStore } from '../stores/toastStore';
 
 const socket = io(import.meta.env.VITE_API_URL || 'http://localhost:3001');
 
@@ -15,6 +16,7 @@ const dataMock = [
 
 export function Dashboard() {
   const [events, setEvents] = useState<string[]>([]);
+  const addToast = useToastStore(state => state.addToast);
   
   useEffect(() => {
     socket.on('carga.temperatura', (msg) => {
@@ -23,6 +25,7 @@ export function Dashboard() {
     
     socket.on('carga.alerta', (msg) => {
       setEvents((prev) => [`🚨 [ALERTA] ${msg.mensagem}`, ...prev]);
+      addToast(msg.mensagem, 'error');
     });
     
     return () => {
@@ -96,12 +99,12 @@ export function Dashboard() {
       <div className="glass-panel p-6 flex flex-col h-[400px]">
         <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
           <Activity className="w-5 h-5 text-accent" />
-          Live Feed (Pub/Sub)
+          Fluxo de Operações
         </h2>
         <div className="flex-1 overflow-y-auto space-y-3 pr-2 mb-4">
           {events.length === 0 ? (
             <div className="text-slate-500 text-sm text-center mt-10">
-              Aguardando eventos dos sensores...
+              Aguardando atualizações da frota...
             </div>
           ) : (
             events.map((evt, i) => (
@@ -114,7 +117,7 @@ export function Dashboard() {
         </div>
         
         <div className="pt-4 border-t border-slate-800">
-          <h3 className="text-sm font-medium text-slate-400 mb-3">Simular Sensores</h3>
+          <h3 className="text-sm font-medium text-slate-400 mb-3">Painel de Simulação (Apresentação)</h3>
           <div className="grid grid-cols-2 gap-2">
             <button 
               onClick={() => fetch('http://localhost:3001/api/simulation/temperature', {

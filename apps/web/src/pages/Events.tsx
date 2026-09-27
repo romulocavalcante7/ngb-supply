@@ -46,9 +46,9 @@ export function Events() {
       <div>
         <h1 className="text-2xl font-bold text-slate-100 flex items-center gap-2">
           <Activity className="text-accent w-6 h-6" />
-          Pub/Sub Monitor
+          Monitor de Dados
         </h1>
-        <p className="text-slate-400 text-sm">Monitoramento em tempo real do broker de mensagens</p>
+        <p className="text-slate-400 text-sm">Monitoramento em tempo real dos sensores e telemetria da frota</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -72,7 +72,7 @@ export function Events() {
           <div className="glass-panel p-5">
             <h2 className="text-sm font-semibold text-slate-300 flex items-center gap-2 mb-4">
               <Database className="w-4 h-4" />
-              Status do Broker
+              Status do Servidor Central
             </h2>
             <div className="flex items-center gap-3">
               <div className="relative flex h-4 w-4">
@@ -94,7 +94,7 @@ export function Events() {
             {events.length === 0 ? (
               <div className="flex flex-col items-center justify-center h-full text-slate-500">
                 <Radio className="w-8 h-8 mb-2 opacity-50" />
-                <p>Aguardando publicações no broker...</p>
+                <p>Aguardando comunicação dos sensores...</p>
               </div>
             ) : (
               events.map((evt) => (
