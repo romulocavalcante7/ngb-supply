@@ -21,15 +21,16 @@ export const useAuthStore = create<AuthStore>((set) => ({
     // Simulação de delay de rede
     await new Promise(resolve => setTimeout(resolve, 800));
     
-    // Autenticação mock (aceita qualquer coisa para fins de demonstração,
-    // mas simula que logou como o Administrador)
-    if (email && password) {
+    // Autenticação fixa para o Super Admin
+    if (email === 'romulogomescavalcante7@gmail.com' && password === '23782613') {
       set({ 
         isAuthenticated: true, 
-        user: { id: 'usr-1111', name: 'Admin Geral', email, role: 'ADMIN' } 
+        user: { id: 'usr-admin', name: 'Rômulo Cavalcante', email, role: 'ADMIN' } 
       });
       return true;
     }
+    
+    // Se não bater a senha
     return false;
   },
   logout: () => set({ isAuthenticated: false, user: null }),

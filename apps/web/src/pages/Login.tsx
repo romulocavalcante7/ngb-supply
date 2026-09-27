@@ -1,18 +1,24 @@
 import { useState } from 'react';
 import { Package, Lock, Mail, ArrowRight } from 'lucide-react';
 import { useAuthStore } from '../stores/authStore';
+import { useToastStore } from '../stores/toastStore';
 
 export function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const { login } = useAuthStore();
+  const { addToast } = useToastStore();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    await login(email, password);
+    const success = await login(email, password);
     setIsLoading(false);
+    
+    if (!success) {
+      addToast('Credenciais inválidas. Acesso negado.', 'error');
+    }
   };
 
   return (
@@ -27,6 +33,9 @@ export function Login() {
           <div className="inline-flex p-3 bg-primary/20 rounded-2xl mb-6">
             <Package className="w-12 h-12 text-primary" />
           </div>
+          <h2 className="text-2xl font-bold tracking-widest text-primary mb-2 uppercase">
+            NGB Supply
+          </h2>
           <h1 className="text-5xl font-bold text-white mb-6 leading-tight">
             Inteligência Logística <br/>
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-emerald-400">
@@ -66,7 +75,7 @@ export function Login() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="block w-full pl-10 pr-3 py-2.5 border border-slate-700 rounded-xl bg-slate-950/50 text-slate-200 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all"
-                  placeholder="admin@ngb.com"
+                  placeholder="romulogomescavalcante7@gmail.com"
                 />
               </div>
             </div>
