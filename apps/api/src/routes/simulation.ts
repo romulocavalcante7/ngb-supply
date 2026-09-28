@@ -5,6 +5,36 @@ import { doorSimulator } from '../simulators/doorSimulator';
 
 export const simulationRoutes = Router();
 
+import { prisma } from '../database/prisma';
+
+simulationRoutes.get('/events', async (req, res) => {
+  try {
+    const [telemetries, alerts] = await Promise.all([
+      prisma.telemetry.findMany({ orderBy: { createdAt: 'desc' }, take: 5 }),
+      prisma.alert.findMany({ orderBy: { createdAt: 'desc' }, take: 5 })
+    ]);
+
+    const events = [
+      ...telemetries.map(t => ({
+        type: 'telemetry',
+        timestamp: t.createdAt.toLocaleTimeString(),
+        message: `Temperatura: ${t.temperature} C`,
+        createdAt: t.createdAt
+      })),
+      ...alerts.map(a => ({
+        type: 'alert',
+        timestamp: a.createdAt.toLocaleTimeString(),
+        message: a.message,
+        createdAt: a.createdAt
+      }))
+    ].sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+
+    res.json(events);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch events' });
+  }
+});
+
 simulationRoutes.post('/gps', (req, res) => {
   const { cargaId, latitude, longitude, cidade } = req.body;
   if (!cargaId || latitude === undefined || longitude === undefined || !cidade) {

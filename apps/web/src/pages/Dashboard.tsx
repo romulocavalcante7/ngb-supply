@@ -19,19 +19,25 @@ export function Dashboard() {
   const addToast = useToastStore(state => state.addToast);
   
   useEffect(() => {
-    socket.on('carga.temperatura', (msg) => {
-      setEvents((prev) => [`[${msg.timestamp}] Temperatura: ${msg.temperatura} ${msg.unidade}`, ...prev]);
-    });
-    
-    socket.on('carga.alerta', (msg) => {
-      setEvents((prev) => [`🚨 [ALERTA] ${msg.mensagem}`, ...prev]);
-      addToast(msg.mensagem, 'error');
-    });
-    
-    return () => {
-      socket.off('carga.temperatura');
-      socket.off('carga.alerta');
+    // Polling interval to simulate real-time on Vercel Serverless
+    const fetchEvents = async () => {
+      try {
+        const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3001'}/api/simulation/events`);
+        if (response.ok) {
+          const data = await response.json();
+          setEvents(data.map((evt: any) => 
+            evt.type === 'alert' ? `🚨 [ALERTA] ${evt.message}` : `[${evt.timestamp}] ${evt.message}`
+          ));
+        }
+      } catch (e) {
+        console.error('Failed to poll events', e);
+      }
     };
+
+    fetchEvents();
+    const interval = setInterval(fetchEvents, 2000);
+    
+    return () => clearInterval(interval);
   }, []);
 
   return (
