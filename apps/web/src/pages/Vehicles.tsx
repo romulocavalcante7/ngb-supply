@@ -16,7 +16,7 @@ export function Vehicles() {
   });
 
   const loadVehicles = () => {
-    axios.get('http://localhost:3001/api/vehicles')
+    axios.get(`${import.meta.env.VITE_API_URL || 'http://localhost:3001'}/api/vehicles`)
       .then(res => setVehicles(res.data))
       .catch(() => addToast('Erro ao carregar veículos', 'error'));
   };
@@ -29,10 +29,10 @@ export function Vehicles() {
     e.preventDefault();
     try {
       if (editingId) {
-        await axios.put(`http://localhost:3001/api/vehicles/${editingId}`, formData);
+        await axios.put(`${import.meta.env.VITE_API_URL || 'http://localhost:3001'}/api/vehicles/${editingId}`, formData);
         addToast('Veículo atualizado com sucesso!', 'success');
       } else {
-        await axios.post('http://localhost:3001/api/vehicles', formData);
+        await axios.post(`${import.meta.env.VITE_API_URL || 'http://localhost:3001'}/api/vehicles`, formData);
         addToast('Veículo cadastrado com sucesso!', 'success');
       }
       setIsModalOpen(false);
@@ -47,7 +47,7 @@ export function Vehicles() {
   const handleDelete = async (id: string) => {
     if (!confirm('Tem certeza que deseja deletar este veículo?')) return;
     try {
-      await axios.delete(`http://localhost:3001/api/vehicles/${id}`);
+      await axios.delete(`${import.meta.env.VITE_API_URL || 'http://localhost:3001'}/api/vehicles/${id}`);
       addToast('Veículo deletado com sucesso!', 'success');
       loadVehicles();
     } catch (error) {

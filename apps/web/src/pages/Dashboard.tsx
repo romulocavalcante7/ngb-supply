@@ -120,7 +120,7 @@ export function Dashboard() {
           <h3 className="text-sm font-medium text-slate-400 mb-3">Painel de Simulação (Apresentação)</h3>
           <div className="grid grid-cols-2 gap-2">
             <button 
-              onClick={() => fetch('http://localhost:3001/api/simulation/temperature', {
+              onClick={() => fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3001'}/api/simulation/temperature`, {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({ cargaId: 'CARGA-001', temperatura: 12.8 })
@@ -130,7 +130,7 @@ export function Dashboard() {
               Temp. Alta
             </button>
             <button 
-              onClick={() => fetch('http://localhost:3001/api/simulation/temperature', {
+              onClick={() => fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3001'}/api/simulation/temperature`, {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({ cargaId: 'CARGA-001', temperatura: 5.0 })
