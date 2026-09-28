@@ -1,6 +1,9 @@
 import express from 'express';
 import cors from 'cors';
 import { router as apiRoutes } from './routes';
+import './subscribers/telemetrySubscriber';
+import './subscribers/riskSubscriber';
+import './subscribers/customerSubscriber';
 
 export const app = express();
 

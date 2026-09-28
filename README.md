@@ -1,12 +1,12 @@
 # NGB Supply - Plataforma de Logística e Telemetria (Padrão Pub/Sub)
 
-**Disciplina:** Arquitetura de Software / Sistemas Distribuídos
-**Professor:** [Nome do Professor]
+**Disciplina:**  Sistemas Computacionais Distribuidos e Computação em Nuvem
+**Professor:** Ana Paula
 **Integrantes do Grupo:**
 1. Rômulo Cavalcante
-2. [Integrante 2]
-3. [Integrante 3]
-4. [Integrante 4]
+2. Guilherme Nunes da Cruz
+3. Emilly Gabrielly
+4. Eduardo Santana
 
 ---
 
