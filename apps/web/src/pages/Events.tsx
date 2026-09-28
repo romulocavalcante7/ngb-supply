@@ -1,8 +1,7 @@
 import { useEffect, useState } from 'react';
-import { io } from 'socket.io-client';
 import { Activity, Server, Radio, Database } from 'lucide-react';
 
-const socket = io(import.meta.env.VITE_API_URL || 'http://localhost:3001');
+const API_URL = import.meta.env.VITE_API_URL || (import.meta.env.DEV ? 'http://localhost:3001' : '');
 
 interface PubSubEvent {
   id: string;
@@ -21,24 +20,29 @@ export function Events() {
   });
 
   useEffect(() => {
-    const handleEvent = (topic: string) => (msg: any) => {
-      const newEvent = {
-        id: Math.random().toString(36).substr(2, 9),
-        topic,
-        time: new Date().toLocaleTimeString(),
-        payload: msg
-      };
-      
-      setEvents(prev => [newEvent, ...prev].slice(0, 50));
-      setTopicCounts(prev => ({ ...prev, [topic]: (prev[topic] || 0) + 1 }));
+    // Polling interval to simulate real-time on Vercel
+    const fetchEvents = async () => {
+      try {
+        const response = await fetch(`${API_URL}/api/simulation/events`);
+        if (response.ok) {
+          const data = await response.json();
+          const newEvents = data.map((evt: any, i: number) => ({
+            id: `evt-${i}-${Date.now()}`,
+            topic: evt.type === 'alert' ? 'carga.alerta' : 'carga.temperatura',
+            time: evt.timestamp,
+            payload: { message: evt.message }
+          }));
+          
+          setEvents(newEvents.slice(0, 50));
+        }
+      } catch (e) {
+        console.error('Failed to poll events', e);
+      }
     };
 
-    const topics = ['carga.localizacao', 'carga.temperatura', 'carga.porta', 'carga.alerta'];
-    topics.forEach(t => socket.on(t, handleEvent(t)));
-
-    return () => {
-      topics.forEach(t => socket.off(t));
-    };
+    fetchEvents();
+    const interval = setInterval(fetchEvents, 2000);
+    return () => clearInterval(interval);
   }, []);
 
   return (

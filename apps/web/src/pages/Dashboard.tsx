@@ -1,10 +1,9 @@
 import { useEffect, useState } from 'react';
-import { io } from 'socket.io-client';
 import { Thermometer, ShieldAlert, MapPin, Activity } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import { useToastStore } from '../stores/toastStore';
 
-const socket = io(import.meta.env.VITE_API_URL || 'http://localhost:3001');
+const API_URL = import.meta.env.VITE_API_URL || (import.meta.env.DEV ? 'http://localhost:3001' : '');
 
 const dataMock = [
   { time: '10:00', temp: 5 },
@@ -22,7 +21,7 @@ export function Dashboard() {
     // Polling interval to simulate real-time on Vercel Serverless
     const fetchEvents = async () => {
       try {
-        const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3001'}/api/simulation/events`);
+        const response = await fetch(`${API_URL}/api/simulation/events`);
         if (response.ok) {
           const data = await response.json();
           setEvents(data.map((evt: any) => 
@@ -126,21 +125,21 @@ export function Dashboard() {
           <h3 className="text-sm font-medium text-slate-400 mb-3">Painel de Simulação (Apresentação)</h3>
           <div className="grid grid-cols-2 gap-2">
             <button 
-              onClick={() => fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3001'}/api/simulation/temperature`, {
+              onClick={() => fetch(`${API_URL}/api/simulation/temperature`, {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({ cargaId: 'CARGA-001', temperatura: 12.8 })
-              })}
+              }).then(() => addToast('Simulação: Temperatura Subiu!', 'success'))}
               className="bg-primary/10 hover:bg-primary/20 border border-primary/30 text-primary transition-all py-2 rounded-lg text-xs font-medium cursor-pointer"
             >
               Temp. Alta
             </button>
             <button 
-              onClick={() => fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3001'}/api/simulation/temperature`, {
+              onClick={() => fetch(`${API_URL}/api/simulation/temperature`, {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({ cargaId: 'CARGA-001', temperatura: 5.0 })
-              })}
+              }).then(() => addToast('Simulação: Temperatura Normalizada', 'success'))}
               className="bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 transition-all py-2 rounded-lg text-xs font-medium cursor-pointer"
             >
               Temp. Normal

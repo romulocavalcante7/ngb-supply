@@ -5,6 +5,8 @@ import { Button } from '../components/ui/Button';
 import { Drawer } from '../components/ui/Drawer';
 import { useToastStore } from '../stores/toastStore';
 
+const API_URL = import.meta.env.VITE_API_URL || (import.meta.env.DEV ? 'http://localhost:3001' : '');
+
 export function Drivers() {
   const [drivers, setDrivers] = useState<any[]>([]);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -14,7 +16,7 @@ export function Drivers() {
 
   const fetchDrivers = async () => {
     try {
-      const response = await axios.get(`${import.meta.env.VITE_API_URL || 'http://localhost:3001'}/api/drivers`);
+      const response = await axios.get(`${API_URL}/api/drivers`);
       setDrivers(response.data);
     } catch (error) {
       addToast('Erro ao buscar motoristas', 'error');
@@ -29,10 +31,10 @@ export function Drivers() {
     e.preventDefault();
     try {
       if (editingId) {
-        await axios.put(`${import.meta.env.VITE_API_URL || 'http://localhost:3001'}/api/drivers/${editingId}`, formData);
+        await axios.put(`${API_URL}/api/drivers/${editingId}`, formData);
         addToast('Motorista atualizado com sucesso', 'success');
       } else {
-        await axios.post(`${import.meta.env.VITE_API_URL || 'http://localhost:3001'}/api/drivers`, formData);
+        await axios.post(`${API_URL}/api/drivers`, formData);
         addToast('Motorista cadastrado com sucesso', 'success');
       }
       setIsDrawerOpen(false);
@@ -45,7 +47,7 @@ export function Drivers() {
   const handleDelete = async (id: string) => {
     if (window.confirm('Deseja realmente excluir este motorista?')) {
       try {
-        await axios.delete(`${import.meta.env.VITE_API_URL || 'http://localhost:3001'}/api/drivers/${id}`);
+        await axios.delete(`${API_URL}/api/drivers/${id}`);
         addToast('Motorista excluído', 'success');
         fetchDrivers();
       } catch (error) {
