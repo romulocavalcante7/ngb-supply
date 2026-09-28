@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Truck, Search, Filter } from 'lucide-react';
+import { Truck, Filter } from 'lucide-react';
 import { Drawer } from '../components/ui/Drawer';
 import { Button } from '../components/ui/Button';
 import { useToastStore } from '../stores/toastStore';

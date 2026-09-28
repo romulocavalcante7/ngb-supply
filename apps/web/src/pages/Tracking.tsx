@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { MapPin, Navigation, Compass, Truck } from 'lucide-react';
+import { Compass } from 'lucide-react';
 import { Button } from '../components/ui/Button';
 
 // Declaração para o TS reconhecer a variável global L do Leaflet
