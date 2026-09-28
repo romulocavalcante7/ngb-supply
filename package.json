@@ -5,8 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "npm run dev -w apps/api & npm run dev -w apps/web",
-    "build": "npm run build -w apps/web",
+    "dev": "npm run dev -w api & npm run dev -w web",
+    "build": "npm run build -w web",
     "postinstall": "npm install prisma@^5.10.2 @prisma/client@^5.10.2 && npx prisma generate"
   },
   "keywords": [],
