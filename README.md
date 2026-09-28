@@ -1,44 +1,63 @@
-# NGB Supply (SmartCargo)
+# NGB Supply - Plataforma de Logística e Telemetria (Padrão Pub/Sub)
 
-Sistema avançado de Logística e Gestão de Cadeia de Suprimentos, focado no monitoramento em tempo real de sensores e telemetria através de uma arquitetura Pub/Sub nativa.
+**Disciplina:** Arquitetura de Software / Sistemas Distribuídos
+**Professor:** [Nome do Professor]
+**Integrantes do Grupo:**
+1. Rômulo Cavalcante
+2. [Integrante 2]
+3. [Integrante 3]
+4. [Integrante 4]
 
-## 📦 O Projeto
-O NGB Supply é uma plataforma Full Stack projetada para simular o controle rigoroso de frotas e cargas sensíveis. 
-A arquitetura se baseia em uma implementação de **Broker Pub/Sub em TypeScript**, que atua como o coração do sistema, desacoplando os Sensores (Produtores) das Regras de Negócio e Telemetria (Consumidores).
+---
 
-## 🚀 Tecnologias
+## 🎯 O Problema e Cenário Escolhido
+O nosso projeto aborda a **Logística e Gestão de Cadeia de Suprimentos (Supply Chain)**, focando especificamente no **rastreamento de frotas e cargas sensíveis em trânsito**.
 
-- **Frontend:** React, TypeScript, Vite, Tailwind CSS (Glassmorphism UI), Zustand, React Router, Recharts, PWA.
-- **Backend:** Node.js, Express, Socket.IO, Prisma ORM.
-- **Banco de Dados:** PostgreSQL (via Supabase).
+Em transportes de medicamentos ou alimentos refrigerados, qualquer oscilação de temperatura ou abertura indevida do baú pode resultar na perda total da carga. Para resolver isso, implementamos uma solução baseada no **Padrão de Projeto Pub/Sub** (Publish/Subscribe), garantindo o total desacoplamento e a comunicação assíncrona baseada em eventos.
 
-## 🏗 Arquitetura
-Consulte a documentação completa da arquitetura na pasta `docs/`:
-- [Arquitetura Geral](docs/architecture.md)
-- [Arquitetura Pub/Sub](docs/pub-sub.md)
+### Como o Pub/Sub foi aplicado:
+- **Tópicos:** `TEMPERATURE`, `LOCATION` e `STATUS`.
+- **Publishers:** Nossos sensores IoT simulados de GPS, Termômetro e Sensor de Porta de Baú. Eles captam os eventos físicos e publicam (grita) as mensagens para o nosso *Broker*, sem saber quem vai receber.
+- **Subscribers:**
+  1. **Central de Gerenciamento de Risco:** Disparada automaticamente se a temperatura da carga sair da meta definida ou se a porta for violada.
+  2. **Sistema de Telemetria da Frota:** Salva a coordenada (GPS) no banco de dados para gerar o histórico da viagem.
+  3. **Cliente Final:** Notificado de que a sua encomenda atualizou a rota.
 
-## 🔧 Como rodar localmente
+Esta arquitetura garante que novos *Subscribers* possam ser adicionados no futuro (ex: disparo de SMS) sem precisar alterar em nada o código-fonte dos nossos sensores no caminhão (*Publishers*).
 
-1. Renomeie o arquivo `.env.example` para `.env` e configure sua `DATABASE_URL` (PostgreSQL).
-2. Instale as dependências executando:
-   `npm install`
-3. Crie o banco de dados e as tabelas:
-   `npx prisma db push`
-4. Preencha o banco com dados simulados:
-   `npx prisma db seed`
-5. Inicie toda a aplicação (Backend + Frontend em paralelo):
-   `npm run dev`
+---
 
-O Frontend abrirá em `http://localhost:5173`.
-O Backend WebSocket rodará na porta `3001`.
+## 🚀 Como Executar o Código
 
-## 🔄 Demonstração do Pub/Sub
-O sistema inclui endpoints de simulação para você testar a arquitetura ao vivo. 
-Ao clicar no "Simulador de Sensores" dentro do Dashboard, a seguinte cadeia ocorre:
+### Opção 1: Acessar Diretamente (Produção)
+O sistema está hospedado na nuvem (Banco de Dados no Supabase e Servidor na Vercel). Você pode interagir com o Pub/Sub ao vivo sem precisar instalar nada:
+👉 **URL:** [Seu link da Vercel aqui]
+**Login de Teste:**
+- Email: `romulogomescavalcante7@gmail.com`
+- Senha: `23782613`
 
-1. O botão chama o backend via REST.
-2. O backend dispara o simulador (ex: GPS, Temperatura).
-3. O simulador aciona o **Publisher**, que empurra a leitura para o **Broker**.
-4. O Broker avisa os **Subscribers** cadastrados.
-5. A *Central de Risco* (Subscriber) intercepta o evento, avalia regras, salva no DB e propaga um Alerta.
-6. O *WebSocket* entrega a atualização ao Frontend de forma reativa.
+*Para testar o Pub/Sub, navegue até a aba "Dashboard" e utilize os botões vermelhos "Simular Aquecimento" e "Abrir Porta".*
+
+### Opção 2: Rodar Localmente (Desenvolvimento)
+Para rodar a simulação e o código-fonte localmente em sua máquina, certifique-se de ter o Node.js v18+ instalado.
+
+1. Clone o repositório:
+```bash
+git clone https://github.com/romulocavalcante7/ngb-supply.git
+cd ngb-supply
+```
+
+2. Instale as dependências de todas as pastas (Monorepo):
+```bash
+npm install
+```
+
+3. Execute o ambiente de desenvolvimento (Frontend Vite + Backend Express API):
+```bash
+npm run dev
+```
+
+4. Acesse a interface web através do navegador:
+`http://localhost:5173`
+
+*(O Broker está instanciado no Backend, rodando por padrão na porta `3001`, que se comunica via WebSocket para atualizar os gráficos do Frontend em tempo real).*
