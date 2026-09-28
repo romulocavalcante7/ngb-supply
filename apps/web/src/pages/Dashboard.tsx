@@ -3,7 +3,7 @@ import { Thermometer, ShieldAlert, MapPin, Activity } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import { useToastStore } from '../stores/toastStore';
 
-const API_URL = import.meta.env.VITE_API_URL || (import.meta.env.DEV ? 'http://localhost:3001' : '');
+const API_URL = (import.meta.env.VITE_API_URL === '/api' ? '' : import.meta.env.VITE_API_URL) || (import.meta.env.DEV ? 'http://localhost:3001' : '');
 
 const dataMock = [
   { time: '10:00', temp: 5 },

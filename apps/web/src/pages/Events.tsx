@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Activity, Server, Radio, Database } from 'lucide-react';
 
-const API_URL = import.meta.env.VITE_API_URL || (import.meta.env.DEV ? 'http://localhost:3001' : '');
+const API_URL = (import.meta.env.VITE_API_URL === '/api' ? '' : import.meta.env.VITE_API_URL) || (import.meta.env.DEV ? 'http://localhost:3001' : '');
 
 interface PubSubEvent {
   id: string;
